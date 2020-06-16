@@ -6,6 +6,8 @@ environmental data including:
 - air...
 '''
 
+from envirodataqc.checkdata import checkvals
+
 #------------------ Check All --------------------#
 def persus(data):
     '''
@@ -27,6 +29,6 @@ def checkall(data):
     '''
     #Value and behavior check
     data = checkvals(data)
-    data = checkbehavior(data)
+    #data = checkbehavior(data)
 
     return data
