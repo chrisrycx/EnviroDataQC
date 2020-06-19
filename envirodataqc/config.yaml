@@ -1,0 +1,23 @@
+#Configuration file for EnviroData QC
+#Specifies data ranges and behavior
+
+#Need ranges - suspicious, bad
+#Need behavior - jumps and flatlining
+#Compact is good
+
+#Reference - XXX
+air_temperature:
+  bad:
+  - range_good: [0,5]
+  - range_susp: [[5,10],[-5,0]]  #Need to figure out range overlap
+  - range_bad: [20,21] #How to define things so they don't conflict?
+  - maxrate_min: 4 #units/min
+  - flat_min: 15
+  suspicious:
+  - range_good: [0,5]
+  - range_susp: [[5,10],[-5,0]]  #Need to figure out range overlap
+  - range_bad: [20,21] #How to define things so they don't conflict?
+  - maxrate_min: 4 #units/min
+  - flat_min: 15
+
+#Real data below...

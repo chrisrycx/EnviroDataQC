@@ -2,8 +2,7 @@
 EnviroData QC
 
 Quality control and assurance of
-environmental data including:
-- air...
+environmental data.
 '''
 
 from envirodataqc.checkdata import checkvals
