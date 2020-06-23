@@ -11,6 +11,8 @@ air_temperature:
   - range_good: [0,5]
   - range_susp: [[5,10],[-5,0]]  #Need to figure out range overlap
   - range_bad: [20,21] #How to define things so they don't conflict?
+  - rate_minute
+  - rate
   - maxrate_min: 4 #units/min
   - flat_min: 15
   suspicious:
@@ -19,5 +21,16 @@ air_temperature:
   - range_bad: [20,21] #How to define things so they don't conflict?
   - maxrate_min: 4 #units/min
   - flat_min: 15
+
+air_temperature:
+  good_vals:
+    - range: [0,5]
+    - rate_minute: [0,10]
+    - flat_minute: [0,15]
+  suspicious_vals:
+    - range: [5,10]
+    - range: [-3,0]
+    - rate_minute: [10,20]
+    - flat_second: [600,1000]
 
 #Real data below...

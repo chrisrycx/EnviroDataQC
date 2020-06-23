@@ -1,0 +1,16 @@
+#Configuration file for EnviroData QC
+#Specifies data ranges and behavior
+
+
+air_temperature:
+  good_vals:
+    - range: [0,5]
+    - rate_minute: [0,10]
+    - flat_minute: [0,15]
+  suspicious_vals:
+    - range: [5,10]
+    - range: [-3,0]
+    - rate_minute: [10,20]
+    - flat_second: [600,1000]
+
+#Real data below...
