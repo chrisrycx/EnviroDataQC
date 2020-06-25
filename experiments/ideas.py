@@ -17,3 +17,4 @@ class qcrange:
     def good(self,value)
     def flat
     def rate
+    def checkrange(data,range_type)
