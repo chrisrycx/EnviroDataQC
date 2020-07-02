@@ -7,12 +7,8 @@ Define dataQC class
 - **each method returns an numpy array of flags for each value
 '''
 
-#Test data
-testgood = {
-    'range':[(0,5),(6,10)],
-    'rate':[(0,10)],
-    'flat':[(0,15)]
-}
+import numpy as np
+import pandas as pd
 
 class dataqc:
     '''
@@ -37,7 +33,7 @@ class dataqc:
         self.susprate = []
         self.suspflat = []
 
-    def _check_range(self,datavals,flags,maxval,minval,rangetype):
+    def _check_range_(self,datavals,flags,minval,maxval,rangetype):
         '''
         "Private" method to check values for a given range
         Inputs
@@ -49,20 +45,33 @@ class dataqc:
             - np array of flags for each value
         '''
         ranges = {'good':0,'suspicious':1}
-        flags[(datavals > minval) and (datavals < maxval)] = ranges[rangetype] 
+        flags[(datavals >= minval) & (datavals <= maxval)] = ranges[rangetype] 
 
         return flags
         
     
     def check_ranges(self,data):
-        data.loc[(data['vals']>minval) | (data['vals']<maxval),'flags'] = 1
+        '''
+        Check data against all good and suspicious ranges
+        Input
+        - data: pandas df with col 0 = values
+        Returns
+        Numpy array of flags associated data values
+        '''
 
-        #Check good range second... this will override if there was overlap
-        for goodrange in airTgood:
-        minval = qc.goodrange[0]
-        maxval = qc.goodrange[1]
-        data.loc[(data['vals']>minval) | (data['vals']<maxval),'flags'] = 0
+        dvals = data.iloc[:,0].values
+        flags = np.ones(len(dvals))*2 #Set all flags to 2 (bad)
 
+        #Check suspicious first so that good range will override
+        for valrange in self.susprange:
+            flags = self._check_range_(dvals,flags,valrange[0],valrange[1],'suspicious')
+        
+        for valrange in self.goodrange:
+            flags = self._check_range_(dvals,flags,valrange[0],valrange[1],'good')
+
+        return flags
+
+    '''
     def check_rate():
         #Calculate absolute slope between input data points
         vdiff = np.absolute(np.diff(data[mtype].values))
@@ -102,6 +111,27 @@ class dataqc:
 
     def check_flat():
             pass
+    '''
 
 
-    
+
+if __name__=='__main__':
+
+    #Testing...
+    data = pd.read_csv('../tests/data/basicdata.csv',index_col=0,parse_dates=True)
+    data = data[['air_temp']]
+    print(data.head())
+
+    #Test data
+    testgood = {
+    'range':[(0,5),(6,10)],
+    'rate':[(0,10)],
+    'flat':[(0,15)]
+    }
+
+    #Create object
+    airTqc = dataqc('air_temperature',testgood,{})
+
+    #Check range
+    data['flags'] = airTqc.check_ranges(data)
+
