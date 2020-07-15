@@ -34,3 +34,15 @@ air_temperature:
     - flat_second: [600,1000]
 
 #Real data below...
+testranges = {
+    'good':{
+        'range':[(-40,50)],
+        'rate':[(0,1.4)],
+        'flat':[(0,15)]
+    },
+    'suspicious':{
+        'range':[],
+        'rate':[(1.4,2)],
+        'flat':[(15,30)]
+    }
+}

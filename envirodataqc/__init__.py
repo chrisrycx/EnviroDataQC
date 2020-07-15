@@ -28,6 +28,10 @@ check_gaps Algorithm
 -- ?
 
 '''
+from dataqc import dataqc
+import pandas as pd
+
+'''
 #Load required libraries
 import yaml
 
@@ -37,6 +41,22 @@ with open(config,'rt') as yin:
     configyaml = yin.read()
 
 config = yaml.safe_load(configyaml) 
+'''
+
+#Testing - Test settings
+testranges = {
+    'good':{
+        'range':[(0,12),(14,16)],
+        'rate':[(0,1.4)],
+        'flat':[(0,15)]
+    },
+    'suspicious':{
+        'range':[(11,13)],
+        'rate':[(1.4,2)],
+        'flat':[(15,30)]
+    }
+}
+qcsettings = {'air_temperature':testranges}
 
 #Check Values function
 def check_vals(data,vartype):
@@ -44,7 +64,7 @@ def check_vals(data,vartype):
     Evaluate range, step change, and flatlining
     of input data.
     Inputs
-     - Pandas dataframe with datetimes (col 0), values (col 1)
+     - Pandas dataframe with datetimeindex and one column of values
      - variable type matching one of the variables in configuration file
     Output - Pandas dataframe of original input plus flag columns 
 
@@ -54,36 +74,32 @@ def check_vals(data,vartype):
     - Check for step change
     - Check for flatlining
     '''
-    #Copy input data frame
-    **might need to rename data column
-    **Initialize bdpts
     
     #Load QC Settings for this variable type
-    qc = qcsettings(config[vartype])
-
-    #Create flag columns
-    data['flags...'] = 0
+    qcranges = qcsettings[vartype]
+    qc = dataqc(vartype,qcranges['good'],qcranges['suspicious'])
 
     #Check range
-    data['flags_range'] = qc.range(data.values[])
-
-    #Remove any bad values from dataframe
-    bdpts = bdpts.join(data[data.flags == 2])
-    data = data[data.flags != 2]
+    data['flags_range'] = qc.check_ranges(data)
 
     #Check step change
-    data['flags_step'] = qc.step(data.values[])
-
-    ##Remove any bad values from dataframe
-    bdpts = bdpts.join(data[data.flags == 2])
-    data = data[data.flags != 2]
+    #data['flags_step'] = qc.step(data.values[])
 
     #Check flatlining
-    data['flags_flat'] = qc.flat(data.values[])
-
-    #Put bad points back in dataset
-    if not bdpts.empty:
-        data = data.append(bdpts)
-        data.sort_index(inplace=True)
+    #data['flags_flat'] = qc.flat(data.values[])
 
     return data
+
+#Test with some data
+if __name__ == "__main__":
+
+    #Read in some test data
+    dpath = '../tests/data/basicdata.csv'
+    data = pd.read_csv(dpath,index_col=0,parse_dates=True)
+
+    #Note that .loc is important here!
+    dataflag = check_vals(data.loc[:,['air_temp']],'air_temperature')
+
+    print(dataflag.head())
+     
+

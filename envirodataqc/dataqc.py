@@ -29,9 +29,9 @@ class dataqc:
         self.goodrange = goodvals['range']   #[(x,y),(x2,y2)...]
         self.goodrate = goodvals['rate']   #Units/min
         self.goodflat = goodvals['flat']   #Minutes
-        self.susprange = []
-        self.susprate = []
-        self.suspflat = []
+        self.susprange = susvals['range']
+        self.susprate = susvals['rate']
+        self.suspflat = susvals['flat']
 
     def _check_range_(self,datavals,flags,minval,maxval,rangetype):
         '''
@@ -54,13 +54,13 @@ class dataqc:
         '''
         Check data against all good and suspicious ranges
         Input
-        - data: pandas df with col 0 = values
+        - data: pandas df with first column values
         Returns
         Numpy array of flags associated data values
         '''
 
         dvals = data.iloc[:,0].values
-        flags = np.ones(len(dvals))*2 #Set all flags to 2 (bad)
+        flags = np.ones(len(dvals),dtype=np.int8)*2 #Set all flags to 2 (bad)
 
         #Check suspicious first so that good range will override
         for valrange in self.susprange:
