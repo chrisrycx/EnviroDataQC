@@ -61,8 +61,10 @@ if __name__ == "__main__":
     data = pd.read_csv(dpath,index_col=0,parse_dates=True)
 
     #Note that .loc is important here!
-    dataflag = check_vals(data.loc[:,['air_temp']],'air_temperature')
+    dataAir = check_vals(data.loc[:,['air_temp']],'air_temperature')
+    dataRH = check_vals(data.loc[:,['humidity']],'humidity')
 
-    print(dataflag.head())
+    print(dataAir.head())
+    print(dataRH.head())
      
 
