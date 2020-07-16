@@ -4,7 +4,7 @@ Quality control and assurance of
 environmental data.
 
 API
-- Uses config.yaml to define QC settings for different variables
+- QC settings defined in QCconfig.py
 - Check Values
     Input
     -- pandas dataframe with datetimes and values
@@ -16,47 +16,10 @@ API
     -- pandas dataframe with datetimes and values
     -- ??
 
-General Algorithm
-- import yaml configuration
-    -- Possible definition of config object
-- define check_vals
-- define check_gaps
-
-
-
-check_gaps Algorithm
--- ?
-
 '''
 from dataqc import dataqc
+import QCconfig
 import pandas as pd
-
-'''
-#Load required libraries
-import yaml
-
-#Load QC settings
-configpath = 'config.yaml'  #****This might not work when package is imported
-with open(config,'rt') as yin:
-    configyaml = yin.read()
-
-config = yaml.safe_load(configyaml) 
-'''
-
-#Testing - Test settings
-testranges = {
-    'good':{
-        'range':[(0,12),(14,16)],
-        'rate':[(0,1.4)],
-        'flat':[(0,15)]
-    },
-    'suspicious':{
-        'range':[(11,13)],
-        'rate':[(1.4,2)],
-        'flat':[(15,30)]
-    }
-}
-qcsettings = {'air_temperature':testranges}
 
 #Check Values function
 def check_vals(data,vartype):
@@ -76,7 +39,7 @@ def check_vals(data,vartype):
     '''
     
     #Load QC Settings for this variable type
-    qcranges = qcsettings[vartype]
+    qcranges = QCconfig.qcsettings[vartype]
     qc = dataqc(vartype,qcranges['good'],qcranges['suspicious'])
 
     #Check range
