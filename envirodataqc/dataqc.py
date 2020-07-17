@@ -115,23 +115,5 @@ class dataqc:
 
 
 
-if __name__=='__main__':
 
-    #Testing...
-    data = pd.read_csv('../tests/data/basicdata.csv',index_col=0,parse_dates=True)
-    data = data[['air_temp']]
-    print(data.head())
-
-    #Test data
-    testgood = {
-    'range':[(0,5),(6,10)],
-    'rate':[(0,10)],
-    'flat':[(0,15)]
-    }
-
-    #Create object
-    airTqc = dataqc('air_temperature',testgood,{})
-
-    #Check range
-    data['flags'] = airTqc.check_ranges(data)
 

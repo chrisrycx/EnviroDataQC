@@ -17,8 +17,8 @@ API
     -- ??
 
 '''
-from dataqc import dataqc
-import QCconfig
+from envirodataqc.dataqc import dataqc
+import envirodataqc.QCconfig
 import pandas as pd
 
 #Check Values function
