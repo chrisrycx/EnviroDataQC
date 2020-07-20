@@ -37,7 +37,6 @@ class TestDataqc(unittest.TestCase):
         testflags = qc.check_ranges(self.data).tolist()
         self.assertEqual(testflags,flags)
 
-
     def test_ranges_empty(self):
         '''
         Test check_ranges with an empty range

@@ -11,7 +11,7 @@ Defines quality control settings for different variables
 #Ref - XXXX
 testVar = {
     'good':{
-        'range':[(0,12),(14,16)],
+        'range':[(0,5),(14,16)],
         'rate':[(0,1.4)],
         'flat':[(0,15)]
     },

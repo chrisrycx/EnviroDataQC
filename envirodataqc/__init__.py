@@ -18,7 +18,7 @@ API
 
 '''
 from envirodataqc.dataqc import dataqc
-import envirodataqc.QCconfig
+from envirodataqc.QCconfig import qcsettings
 import pandas as pd
 
 #Check Values function
@@ -39,7 +39,7 @@ def check_vals(data,vartype):
     '''
     
     #Load QC Settings for this variable type
-    qcranges = QCconfig.qcsettings[vartype]
+    qcranges = qcsettings[vartype]
     qc = dataqc(vartype,qcranges['good'],qcranges['suspicious'])
 
     #Check range
@@ -53,18 +53,6 @@ def check_vals(data,vartype):
 
     return data
 
-#Test with some data
-if __name__ == "__main__":
 
-    #Read in some test data
-    dpath = '../tests/data/basicdata.csv'
-    data = pd.read_csv(dpath,index_col=0,parse_dates=True)
-
-    #Note that .loc is important here!
-    dataAir = check_vals(data.loc[:,['air_temp']],'air_temperature')
-    dataRH = check_vals(data.loc[:,['humidity']],'humidity')
-
-    print(dataAir.head())
-    print(dataRH.head())
      
 
