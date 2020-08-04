@@ -58,3 +58,6 @@ ENV/
 env.bak/
 venv.bak/
 .vscode
+
+# AWS Deployment
+awsdeploy/python
