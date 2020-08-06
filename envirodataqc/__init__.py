@@ -19,6 +19,7 @@ API
 '''
 from envirodataqc.dataqc import dataqc
 from envirodataqc.QCconfig import qcsettings
+import numpy as np
 import pandas as pd
 
 #Check Values function
@@ -52,6 +53,24 @@ def check_vals(data,vartype):
     #data['flags_flat'] = qc.flat(data.values[])
 
     return data
+
+def check_gaps(dataindex):
+    '''
+    Check gaps between data
+    Output total of gaps > 1hr
+    Input:
+    - Pandas datetime index
+    Output: total gaps in hours
+    '''
+    #Calculate gaps between points in minutes
+    timediff = np.diff(dataindex)
+    timediff = timediff.astype(float)/(60*(10**9)) #60 x 10^9 to convert from nanosec
+
+    #Find total of gaps over 1hr
+    tot = round(timediff[timediff > 60].sum()/60,1)
+
+    return tot
+
 
 
      

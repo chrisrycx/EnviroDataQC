@@ -1,5 +1,6 @@
 '''
-Test check_vals function
+Test EnviroDataQC main functions
+- check_vals, check_gaps
 - Uses unittest
 - Checks function with data from tphdata.csv
 - Change tphdata.csv via testdata.ods
@@ -11,7 +12,7 @@ import pandas as pd
 import numpy as np
 import envirodataqc
 
-class TestCheck_vals(unittest.TestCase):
+class TestEnviroDataQC(unittest.TestCase):
 
     def setUp(self):
         '''
@@ -85,6 +86,18 @@ class TestCheck_vals(unittest.TestCase):
             check_dtype = False,
             check_names = False
             )
+
+    def test_gaps(self):
+        '''
+        Verify that output from check_gaps is correct
+        '''
+        dtindex = self.data.index
+
+        #Run function
+        totgaps = envirodataqc.check_gaps(dtindex)
+
+        #Test output
+        self.assertEqual(totgaps,1.3)
 
 
 
