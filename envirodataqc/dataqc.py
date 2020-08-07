@@ -50,7 +50,7 @@ class dataqc:
         return flags
         
     
-    def check_ranges(self,data):
+    def check_range(self,data):
         '''
         Check data against all good and suspicious ranges
         Input
@@ -70,6 +70,38 @@ class dataqc:
             flags = self._check_range_(dvals,flags,valrange[0],valrange[1],'good')
 
         return flags
+
+    def check_rate(self,data):
+        '''
+        Check data change of rate
+        Input
+        - data: pandas df with first column values
+        
+        Returns
+        Numpy array of flags associated data values
+        '''
+        #Calculate rates of change between points (units/min)
+        dvals = data.iloc[:,0].values
+        valdiff = np.diff(dvals)
+        timediff = np.diff(data.index)
+        timediff = timediff.astype(float)/(60*(10**9)) #60 x 10^9 to convert from nanosec
+        dataslopes = valdiff/timediff
+
+        #Determine if different rates are good, suspicious, or bad
+        #Check suspicious first so that good range will override
+        rateflags = np.ones(len(dvals),dtype=np.int8)*2 #Set all flags to 2 (bad)
+        for valrange in self.susprate:
+            rateflags = self._check_range_(dvals,rateflags,valrange[0],valrange[1],'suspicious')
+        
+        for valrange in self.goodrate:
+            rateflags = self._check_range_(dvals,rateflags,valrange[0],valrange[1],'good')
+
+        #Flag points based on rate flags
+        
+        return rateflags
+
+
+
 
     '''
     def check_rate():

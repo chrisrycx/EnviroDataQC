@@ -44,7 +44,7 @@ def check_vals(data,vartype):
     qc = dataqc(vartype,qcranges['good'],qcranges['suspicious'])
 
     #Check range
-    data['flags_range'] = qc.check_ranges(data)
+    data['flags_range'] = qc.check_range(data)
 
     #Check step change
     #data['flags_step'] = qc.step(data.values[])
@@ -61,6 +61,7 @@ def check_gaps(dataindex):
     Input:
     - Pandas datetime index
     Output: total gaps in hours
+    **Currently returns np float64
     '''
     #Calculate gaps between points in minutes
     timediff = np.diff(dataindex)

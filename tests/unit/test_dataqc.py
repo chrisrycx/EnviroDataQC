@@ -4,6 +4,7 @@ Test dataqc class
 '''
 
 import unittest
+import datetime
 import pandas as pd
 import numpy as np
 from envirodataqc.dataqc import dataqc
@@ -13,14 +14,32 @@ class TestDataqc(unittest.TestCase):
     def setUp(self):
         '''
         Create a pandas dataframe for tests
+        This dataset is somewhat arbitrary but meant to 
+        be useful in a variety of ways.
         '''
-        datavals = [0,-1,15,300.4,16,17.33,-40.5,20,21.33,0]
+        testdata = [
+            (datetime.datetime(2020,8,7,0,0),1),
+            (datetime.datetime(2020,8,7,0,15),1),
+            (datetime.datetime(2020,8,7,0,30),1),
+            (datetime.datetime(2020,8,7,0,45),6),
+            (datetime.datetime(2020,8,7,1,0),1),
+            (datetime.datetime(2020,8,7,1,15),2),
+            (datetime.datetime(2020,8,7,1,30),-4),
+            (datetime.datetime(2020,8,7,2,0),-3),
+            (datetime.datetime(2020,8,7,2,30),-6),
+            (datetime.datetime(2020,8,7,2,45),8),
+            (datetime.datetime(2020,8,7,3,0),8),
+            (datetime.datetime(2020,8,7,3,15),6),
+            (datetime.datetime(2020,8,7,3,30),6)        ]
+        ]
+
+        
         self.data = pd.DataFrame({'data':datavals})
 
     def tearDown(self):
         pass
 
-    def test_ranges_multiple(self):
+    def test_range_multiple(self):
         '''
         Test check_ranges method with multiple good
         and suspicious ranges of values
@@ -37,7 +56,7 @@ class TestDataqc(unittest.TestCase):
         testflags = qc.check_ranges(self.data).tolist()
         self.assertEqual(testflags,flags)
 
-    def test_ranges_empty(self):
+    def test_range_empty(self):
         '''
         Test check_ranges with an empty range
         for suspicious values
