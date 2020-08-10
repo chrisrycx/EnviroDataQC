@@ -89,12 +89,12 @@ class dataqc:
 
         #Determine if different rates are good, suspicious, or bad
         #Check suspicious first so that good range will override
-        rateflags = np.ones(len(dvals),dtype=np.int8)*2 #Set all flags to 2 (bad)
+        rateflags = np.ones(len(dataslopes),dtype=np.int8)*2 #Set all flags to 2 (bad)
         for valrange in self.susprate:
-            rateflags = self._check_range_(dvals,rateflags,valrange[0],valrange[1],'suspicious')
+            rateflags = self._check_range_(dataslopes,rateflags,valrange[0],valrange[1],'suspicious')
         
         for valrange in self.goodrate:
-            rateflags = self._check_range_(dvals,rateflags,valrange[0],valrange[1],'good')
+            rateflags = self._check_range_(dataslopes,rateflags,valrange[0],valrange[1],'good')
 
         #Flag points based on rate flags
         

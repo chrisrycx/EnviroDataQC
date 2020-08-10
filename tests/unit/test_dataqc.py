@@ -27,11 +27,12 @@ class TestDataqc(unittest.TestCase):
             (datetime.datetime(2020,8,7,1,30),-4),
             (datetime.datetime(2020,8,7,2,0),-3),
             (datetime.datetime(2020,8,7,2,30),-6),
-            (datetime.datetime(2020,8,7,2,45),8),
+            (datetime.datetime(2020,8,7,2,45),14),
             (datetime.datetime(2020,8,7,3,0),8),
             (datetime.datetime(2020,8,7,3,15),6),
-            (datetime.datetime(2020,8,7,3,30),6)        ]
-        ]
+            (datetime.datetime(2020,8,7,3,30),6)
+            ]
+        
 
         
         self.data = pd.DataFrame({'data':datavals})
