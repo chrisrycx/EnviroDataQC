@@ -56,7 +56,7 @@ class dataqc:
         Input
         - data: pandas df with first column values
         Returns
-        Numpy array of flags associated data values
+        List of flags associated with data values
         '''
 
         dvals = data.iloc[:,0].values
@@ -78,7 +78,7 @@ class dataqc:
         - data: pandas df with first column values
         
         Returns
-        Numpy array of flags associated data values
+        List of flags associated with data values
         '''
         #Calculate rates of change between points (units/min)
         dvals = data.iloc[:,0].values
@@ -111,18 +111,69 @@ class dataqc:
         
         return flags
 
-
-
-
-    '''
-    def check_rate():
-        #Calculate absolute slope between input data points
-        vdiff = np.absolute(np.diff(data[mtype].values))
-        #Calculate time differences in minutes
+    def check_flat(self,data):
+        '''
+        Check input data for excessive flatlining
+        Input
+        - data: pandas df with first column values
+        
+        Returns
+        List of flags associated with data values
+        '''
+        #Calculate rates of change between points (units/min)
+        dvals = data.iloc[:,0].values
         timediff = np.diff(data.index)
         timediff = timediff.astype(float)/(60*(10**9)) #60 x 10^9 to convert from nanosec
-        dataslopes = vdiff/timediff
+        valdiff = np.diff(dvals)
+        
+        #Create a list of flags where slopes == 0
+        flatflags = (valdiff==0)*1
 
+        #Combine flags with timediff to isolate times where flat
+        timediff = timediff*flatflags
+
+        #Extract the times associated with each flat section
+        flatgroups = []
+        counter = 0
+        oldtime = 0
+        for timestep in timediff:
+            if (timestep!=0) and (oldtime==0):
+                '''
+                Starts a section of flat data
+                '''
+                flatgroups.append(timestep)
+
+            elif (timestep!=0) and (oldtime!=0):
+                '''
+                Continue adding times to section of flat
+                '''
+                flatgroups[counter]=flatgroups[counter]+timestep
+                
+            elif (timestep==0) and (oldtime!=0):
+                '''
+                Indicates the end of a section
+                '''
+                counter = counter+1
+
+            oldtime = timestep
+
+        #Check the flatgroups for good, bad, suspicious
+        flatgroups = np.array(flatgroups)
+        groupflags = np.ones(len(flatgroups),dtype=np.int8)*2 #Set all flags to 2 (bad)
+        for valrange in self.suspflat:
+            groupflags = self._check_range_(flatgroups,groupflags,valrange[0],valrange[1],'suspicious')
+        
+        for valrange in self.goodflat:
+            groupflags = self._check_range_(flatgroups,groupflags,valrange[0],valrange[1],'good')
+
+        #Update flatflags to match flag group
+        
+
+                
+        return groupflags
+
+
+        '''
         #Flag points based on jumps. Also identify flatlined sections
         oldslopeflat = False #Keeps track of start of flatlined data
         sindex = 0
