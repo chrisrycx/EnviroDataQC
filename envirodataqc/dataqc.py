@@ -69,7 +69,7 @@ class dataqc:
         for valrange in self.goodrange:
             flags = self._check_range_(dvals,flags,valrange[0],valrange[1],'good')
 
-        return flags
+        return flags.tolist()
 
     def check_rate(self,data):
         '''
@@ -97,8 +97,19 @@ class dataqc:
             rateflags = self._check_range_(dataslopes,rateflags,valrange[0],valrange[1],'good')
 
         #Flag points based on rate flags
+        def flagcalc(flag1, flag2):
+            '''
+            Calculate flag for point based on slope flags
+            '''
+        flags = []
+        flagcalc = {0:0,1:1,2:1,3:2,4:2} #Truth table for flag1 + flag2
+        for n in range(len(rateflags)-1):
+            flags.append(flagcalc[rateflags[n]+rateflags[n+1]])
+        #Endpoints
+        flags.insert(0,rateflags[0])
+        flags.append(rateflags[-1])
         
-        return rateflags
+        return flags
 
 
 
