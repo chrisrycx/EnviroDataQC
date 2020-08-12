@@ -173,8 +173,12 @@ class dataqc:
                 Indicates the end of a flag section
                 '''
                 counter = counter + 1
+            
+            if flag==1:
+                slopeflagsnew.append(flag*groupflags[counter])
+            else:
+                slopeflagsnew.append(0)
 
-            slopeflagsnew.append(flag*groupflags[counter])
             oldflag = flag
 
         #Finally: assign point flags based on slope flags

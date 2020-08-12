@@ -47,10 +47,10 @@ def check_vals(data,vartype):
     data['flags_range'] = qc.check_range(data)
 
     #Check step change
-    #data['flags_step'] = qc.step(data.values[])
+    data['flags_rate'] = qc.check_rate(data)
 
     #Check flatlining
-    #data['flags_flat'] = qc.flat(data.values[])
+    data['flags_flat'] = qc.check_flat(data)
 
     return data
 
