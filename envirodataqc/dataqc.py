@@ -97,10 +97,6 @@ class dataqc:
             rateflags = self._check_range_(dataslopes,rateflags,valrange[0],valrange[1],'good')
 
         #Flag points based on rate flags
-        def flagcalc(flag1, flag2):
-            '''
-            Calculate flag for point based on slope flags
-            '''
         flags = []
         flagcalc = {0:0,1:1,2:1,3:2,4:2} #Truth table for flag1 + flag2
         for n in range(len(rateflags)-1):
@@ -127,10 +123,10 @@ class dataqc:
         valdiff = np.diff(dvals)
         
         #Create a list of flags where slopes == 0
-        flatflags = (valdiff==0)*1
+        slopeflags = (valdiff==0)*1
 
         #Combine flags with timediff to isolate times where flat
-        timediff = timediff*flatflags
+        timediff = timediff*slopeflags
 
         #Extract the times associated with each flat section
         flatgroups = []
@@ -166,47 +162,30 @@ class dataqc:
         for valrange in self.goodflat:
             groupflags = self._check_range_(flatgroups,groupflags,valrange[0],valrange[1],'good')
 
-        #Update flatflags to match flag group
-        
+        #Update slopeflags to match flag group
+        oldflag = 0
+        slopeflagsnew = []
+        counter = 0
+        for flag in slopeflags:
 
-                
-        return groupflags
+            if (flag!=1) and (oldflag==1):
+                '''
+                Indicates the end of a flag section
+                '''
+                counter = counter + 1
 
+            slopeflagsnew.append(flag*groupflags[counter])
+            oldflag = flag
 
-        '''
-        #Flag points based on jumps. Also identify flatlined sections
-        oldslopeflat = False #Keeps track of start of flatlined data
-        sindex = 0
-        counter = 0 #Keep track of index
-        for slope in dataslopes:
-        
-            if (slope!=0) and (oldslopeflat):
-                #Signifies the end of a section of flat data
-                eindex = counter
-                #Check amount of time flat
-                flattime = (data.index[eindex] - data.index[sindex]).seconds/60 #Time in minutes
-                #If exceeds maximum time flag all points
-                if flattime > maxflat[mtype]:
-                    data.iloc[sindex:eindex+1,1]=1
-                oldslopeflat = False
-
-            if (slope==0) and (not oldslopeflat):
-                #Signifies the start of a flat section
-                sindex = counter
-                oldslopeflat = True
-        
-            #Slope exceeds limits
-            if abs(slope) > maxjump[mtype]:
-                #Flag points adjacent as suspicious
-                data.iloc[counter,1] = 1
-                data.iloc[counter+1,1] = 1
-
-            counter = counter+1
-
-    def check_flat():
-            pass
-    '''
-
+        #Finally: assign point flags based on slope flags
+        flags = []
+        for n in range(len(slopeflagsnew)-1):
+            flags.append(max(slopeflagsnew[n],slopeflagsnew[n+1]))
+        #Endpoints
+        flags.insert(0,slopeflagsnew[0])
+        flags.append(slopeflagsnew[-1])
+ 
+        return flags
 
 
 
