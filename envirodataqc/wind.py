@@ -1,34 +1,36 @@
 '''
 Special QC Algorithms for wind
 '''
-#------------ Wind specific algorithms -----------------#
-def windspchk(datasp):
+import numpy as np
+import pandas as pd
+
+def check_windspeed(data):
     '''
-    Evaluate speeds for internal consistency
-    - Calculate daily average and maximum wind speed
-    - Assesses ratio of max/ave winds
-    Input - Dataframe of wind speed values, flags
+    Evaluate wind speeds for internal consistency
+    - Calculate ratio of max/ave values (typically for 24hr period)
+    Input
+     - Dataframe of wind speed values
+
+    Algorithm:
+    Calculate average (numerical integral) of values
+    Calculate the max value
+    Return ratio of values
     '''
-    #Output dataframe
-    daydata = pd.DataFrame()
+    #Calculate the max
+    maxval = data.iloc[:,0].max()
+
+    #Calculate the average using numerical integration
+    dvals = data.iloc[:,0].to_numpy()
+    timediff = np.diff(data.index)
+    timediff = timediff.astype(float)/(60*(10**9)) #60 x 10^9 to convert from nanosec
+    dmins = np.cumsum(timediff) #Minutes past starting time
+    dmins = np.insert(dmins,0,0)
+    dataintegral = np.trapz(dvals,dmins)
+    dave = dataintegral/dmins[-1] #Last value should be total time period
     
-    #Resample to daily values and calculate
-    daydata['avgwinds'] = datasp.resample('1D').apply(dataAvg) #Returns a series
-    daydata['maxwinds'] = datasp.wind_speed.resample('1D').max()
-
-    #Ratio
-    daydata['max_avg'] = daydata.avgwinds/daydata.maxwinds
-
-    #Flag data where avg/max ratio < 0.1
-    daydata.dropna(inplace=True) #Drop any nans associated with endpoints
-    counter = 0
-    for day in daydata.index:
-        if daydata.max_avg[counter]<0.1:
-            #Flag all point associated with a given day
-            datasp.loc[day.to_pydatetime():,'flags']=1 #Colon needed for datetime...see help
-        counter = counter+1
-
-    return datasp, daydata
+    #Return the ratio
+    return maxval/dave
+    
 
 def winddirchk(datasp,datadir):
     '''
