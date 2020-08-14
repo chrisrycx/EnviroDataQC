@@ -32,43 +32,28 @@ def check_windspeed(data):
     return maxval/dave
     
 
-def winddirchk(datasp,datadir):
+def check_winddir(data):
     '''
     Evaluate direction data
     Assess flatlining in context of windspeed.
     Flatlining associated with wind > 0 is suspicious.
+    Input
+    - dataframe: index (datetime),speedvals,dirvals
+    Return
+    - list of flags associated with each value (0 good, 1 suspicious)
     '''
-    #Set bad speed values to np.nan
-    datasp[datasp['flags'] == 2] = np.nan
+    spvals = data.iloc[:,0].to_numpy()
+    dirvals = data.iloc[:,1].to_numpy()
+
+    #Loop through values checking
+    flags = np.zeros(len(spvals)) #Initialize flags to zero
+    for n in range(len(spvals-1)):
+        #Flag where direction change is zero but wind > 0
+        dirdiff = dirvals[n+1] - dirvals[n]
+        spsum = spvals[n+1] + spvals[n]
+        if (dirdiff == 0) and (spdiff > 0):
+            flags[n] = 1
+
+    return flags.to_list()
+
     
-    #Extract flags to avoid data warning
-    myflags = datadir.flags.values
-
-    #Calculate slope between input data points
-    #Ignore time, every point should be different when wind > 0
-    slopes = np.diff(datadir.wind_direction.values)
-
-    #Assess slopes and flag
-    counter = 1 #Keep track of index
-    for slope in slopes:
-        if slope == 0:
-            index1 = counter - 1
-            index2 = counter
-            speed1 = datasp.wind_speed[index1]
-            speed2 = datasp.wind_speed[index2]
-            spflag1 = datasp.flags[index1]
-            spflag2 = datasp.flags[index2]
-            #Flag points associated with 0 slope if speed != 0
-            if (speed1!=0)and(speed2!=0):
-                myflags[index1] = 1
-                myflags[index2] = 1
-            #Flag points associated with 0 slope if speed is suspect
-            if(spflag1==1)and(spflag2==1):
-                myflags[index1] = 1
-                myflags[index2] = 1
-        counter = counter + 1
-
-    #Set flags again
-    datadir.flags = myflags
-
-    return datadir
