@@ -67,7 +67,17 @@ class Testdataqc(unittest.TestCase):
         Test check_ranges with an empty range
         for suspicious values
         '''
-        pass
+        #Test parameters
+        testgood = {'range':[],'rate':[],'flat':[]}
+        testsusp = {'range':[],'rate':[],'flat':[]}
+        flags = [2,2,2,2,2,2,2,2,2,2,2,2,2]
+
+        #Load class
+        qc = dataqc('test',testgood,testsusp)
+
+        #Test output
+        testflags = qc.check_range(self.data)
+        self.assertEqual(testflags,flags)
 
     def test_range_overlap(self):
         '''
@@ -84,6 +94,23 @@ class Testdataqc(unittest.TestCase):
         testgood = {'range':[(-1,2),(4,6)],'rate':[(-0.27,0.27)],'flat':[]}
         testsusp = {'range':[(-5,-1)],'rate':[(0.27,0.34),(-0.34,-0.27)],'flat':[]}
         flags = [0,0,1,1,1,1,1,0,1,2,1,0,0]
+
+        #Load class
+        qc = dataqc('test',testgood,testsusp)
+
+        #Test output
+        testflags = qc.check_rate(self.data)
+        self.assertEqual(testflags,flags)
+
+    def test_rate_empty(self):
+        '''
+        Test that all data flagged bad
+        when no good, suspicious ranges given.
+        '''
+        #Test parameters
+        testgood = {'range':[],'rate':[],'flat':[]}
+        testsusp = {'range':[],'rate':[],'flat':[]}
+        flags = [2,2,2,2,2,2,2,2,2,2,2,2,2]
 
         #Load class
         qc = dataqc('test',testgood,testsusp)
