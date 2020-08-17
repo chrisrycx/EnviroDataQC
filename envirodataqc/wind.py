@@ -45,15 +45,25 @@ def check_winddir(data):
     spvals = data.iloc[:,0].to_numpy()
     dirvals = data.iloc[:,1].to_numpy()
 
-    #Loop through values checking
-    flags = np.zeros(len(spvals)) #Initialize flags to zero
-    for n in range(len(spvals-1)):
+    #Check flatlining against wind speed
+    slopeflags = []
+    for n in range(len(spvals)-1):
         #Flag where direction change is zero but wind > 0
         dirdiff = dirvals[n+1] - dirvals[n]
         spsum = spvals[n+1] + spvals[n]
-        if (dirdiff == 0) and (spdiff > 0):
-            flags[n] = 1
+        if (dirdiff == 0) and (spsum > 0):
+            slopeflags.append(1)
+        else:
+            slopeflags.append(0)
 
-    return flags.to_list()
+    #Finally: assign point flags based on slope flags
+    flags = []
+    for n in range(len(slopeflags)-1):
+        flags.append(max(slopeflags[n],slopeflags[n+1]))
+    #Endpoints
+    flags.insert(0,slopeflags[0])
+    flags.append(slopeflags[-1])
+
+    return flags
 
     
