@@ -29,7 +29,7 @@ def check_windspeed(data):
     dave = dataintegral/dmins[-1] #Last value should be total time period
     
     #Return the ratio
-    return maxval/dave
+    return dave/maxval
     
 
 def check_winddir(data):
