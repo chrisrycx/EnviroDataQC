@@ -4,5 +4,5 @@ pip install --upgrade --no-deps --target awsdeploy\python .
 aws lambda publish-layer-version \
     --layer-name EnviroDataQC \
     --description "Version number" \
-    --compatible-runtimes python3.6 python 3.7 python 3.8 \
+    --compatible-runtimes python3.6 python3.7 python3.8 \
     --zip-file fileb://<filename>
