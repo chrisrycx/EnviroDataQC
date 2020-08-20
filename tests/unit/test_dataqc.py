@@ -53,13 +53,14 @@ class Testdataqc(unittest.TestCase):
         #Test parameters
         testgood = {'range':[(-2,4),(8,12)],'rate':[],'flat':[]}
         testsusp = {'range':[(-10,-2)],'rate':[],'flat':[]}
+        testignore = {'range':[],'rate':[],'flat':[]}
         flags = [0,0,0,2,0,0,1,1,1,2,0,2,2]
 
         #Load class
-        qc = dataqc('test',testgood,testsusp)
+        qc = dataqc('test',testgood,testsusp,testignore)
 
         #Test output
-        testflags = qc.check_range(self.data)
+        testflags = qc.check_range(self.data).tolist()
         self.assertEqual(testflags,flags)
 
     def test_range_empty(self):
@@ -70,13 +71,14 @@ class Testdataqc(unittest.TestCase):
         #Test parameters
         testgood = {'range':[],'rate':[],'flat':[]}
         testsusp = {'range':[],'rate':[],'flat':[]}
+        testignore = {'range':[],'rate':[],'flat':[]}
         flags = [2,2,2,2,2,2,2,2,2,2,2,2,2]
 
         #Load class
-        qc = dataqc('test',testgood,testsusp)
+        qc = dataqc('test',testgood,testsusp,testignore)
 
         #Test output
-        testflags = qc.check_range(self.data)
+        testflags = qc.check_range(self.data).tolist()
         self.assertEqual(testflags,flags)
 
     def test_range_overlap(self):
@@ -93,13 +95,14 @@ class Testdataqc(unittest.TestCase):
         #Test parameters
         testgood = {'range':[(-1,2),(4,6)],'rate':[(-0.27,0.27)],'flat':[]}
         testsusp = {'range':[(-5,-1)],'rate':[(0.27,0.34),(-0.34,-0.27)],'flat':[]}
+        testignore = {'range':[],'rate':[],'flat':[]}
         flags = [0,0,1,1,1,1,1,0,1,2,1,0,0]
 
         #Load class
-        qc = dataqc('test',testgood,testsusp)
+        qc = dataqc('test',testgood,testsusp,testignore)
 
         #Test output
-        testflags = qc.check_rate(self.data)
+        testflags = qc.check_rate(self.data).tolist()
         self.assertEqual(testflags,flags)
 
     def test_rate_empty(self):
@@ -110,13 +113,14 @@ class Testdataqc(unittest.TestCase):
         #Test parameters
         testgood = {'range':[],'rate':[],'flat':[]}
         testsusp = {'range':[],'rate':[],'flat':[]}
+        testignore = {'range':[],'rate':[],'flat':[]}
         flags = [2,2,2,2,2,2,2,2,2,2,2,2,2]
 
         #Load class
-        qc = dataqc('test',testgood,testsusp)
+        qc = dataqc('test',testgood,testsusp,testignore)
 
         #Test output
-        testflags = qc.check_rate(self.data)
+        testflags = qc.check_rate(self.data).tolist()
         self.assertEqual(testflags,flags)
 
     def test_flat(self):
@@ -136,7 +140,10 @@ class Testdataqc(unittest.TestCase):
             (datetime.datetime(2020,8,7,2,30),2),
             (datetime.datetime(2020,8,7,2,45),2),
             (datetime.datetime(2020,8,7,3,15),2),
-            (datetime.datetime(2020,8,7,3,30),2)
+            (datetime.datetime(2020,8,7,3,30),2),
+            (datetime.datetime(2020,8,7,3,45),4),
+            (datetime.datetime(2020,8,7,4,0),4),
+            (datetime.datetime(2020,8,7,4,15),4)
             ]
 
         #Create dataframe
@@ -152,18 +159,19 @@ class Testdataqc(unittest.TestCase):
         testgood = {
             'range':[(0,16),(20,100)],
             'rate':[(-0.27,0.27)],
-            'flat':[(0,40)]}
+            'flat':[(0,15)]}
         testsusp = {
             'range':[(-1,0),(16,20)],
             'rate':[(0.27,0.34),(-0.34,-0.27)],
-            'flat':[(45,55)]}
+            'flat':[(15,55)]}
+        testignore = {'range':[],'rate':[],'flat':[4]}
         
         #Load class
-        qc = dataqc('test',testgood,testsusp)
+        qc = dataqc('test',testgood,testsusp,testignore)
 
         #Check output
-        flags = [0,1,1,1,0,0,0,0,2,2,2,2]
-        testflags = qc.check_flat(data)
+        flags = [0,1,1,1,0,0,0,0,2,2,2,2,0,0,0]
+        testflags = qc.check_flat(data).tolist()
         self.assertEqual(testflags,flags)
 
 

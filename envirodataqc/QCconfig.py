@@ -19,6 +19,11 @@ testVar = {
         'range':[(11,13)],
         'rate':[(1.4,2)],
         'flat':[(15,30)]
+    },
+    'ignore_vals':{
+        'range':[],
+        'rate':[],
+        'flat':[]
     }
 }
 
@@ -35,6 +40,11 @@ airT = {
         'range':[(-40,-30),(45,50)],
         'rate':[(1.4,2),(-2,-1.4)],
         'flat':[(15,30)]
+    },
+    'ignore_vals':{
+        'range':[],
+        'rate':[],
+        'flat':[]
     }
 }
 
@@ -51,6 +61,11 @@ rh = {
         'range':[(0,5),(100,105)],
         'rate':[(4.4,5),(-5,-4.4)],
         'flat':[(15,30)]
+    },
+    'ignore_vals':{
+        'range':[],
+        'rate':[],
+        'flat':[0,100]
     }
 }
 
@@ -62,12 +77,17 @@ bp = {
     'good':{
         'range':[(700,1050)],
         'rate':[(-1,1)],
-        'flat':[(0,15)]
+        'flat':[(0,40)]
     },
     'suspicious':{
         'range':[],
         'rate':[],
-        'flat':[(15,30)]
+        'flat':[(40,60)]
+    },
+    'ignore_vals':{
+        'range':[],
+        'rate':[],
+        'flat':[0]
     }
 }
 
@@ -84,6 +104,11 @@ ws = {
         'range':[],
         'rate':[],
         'flat':[(60,90)]
+    },
+    'ignore_vals':{
+        'range':[],
+        'rate':[],
+        'flat':[0]
     }
 }
 
@@ -94,12 +119,17 @@ wg = {
     'good':{
         'range':[(10,60)],
         'rate':[(-10,10)],
-        'flat':[(0,2880)] #Two days without a gust OK
+        'flat':[] #Two days without a gust OK
     },
     'suspicious':{
         'range':[],
         'rate':[],
         'flat':[]
+    },
+    'ignore_vals':{
+        'range':[],
+        'rate':[],
+        'flat':[0]
     }
 }
 
@@ -116,6 +146,11 @@ wd = {
         'range':[],
         'rate':[],
         'flat':[(15,30)]
+    },
+    'ignore_vals':{
+        'range':[],
+        'rate':[],
+        'flat':[]
     }
 }
 
@@ -132,6 +167,11 @@ swrad = {
         'range':[],
         'rate':[],
         'flat':[(15,30)]
+    },
+    'ignore_vals':{
+        'range':[],
+        'rate':[],
+        'flat':[0]
     }
 }
 

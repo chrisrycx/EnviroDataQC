@@ -15,7 +15,7 @@ class dataqc:
     dataqc class:
     Contains QC settings and methods
     '''
-    def __init__(self,typename,goodvals,susvals):
+    def __init__(self,typename,goodvals,susvals,ignore):
         '''
         Create a new data QC object
         Input
@@ -32,6 +32,7 @@ class dataqc:
         self.susprange = susvals['range']
         self.susprate = susvals['rate']
         self.suspflat = susvals['flat']
+        self.ignore = ignore #Values where flags are removed post analysis
 
     def _check_range_(self,datavals,flags,minval,maxval,rangetype):
         '''
@@ -69,7 +70,11 @@ class dataqc:
         for valrange in self.goodrange:
             flags = self._check_range_(dvals,flags,valrange[0],valrange[1],'good')
 
-        return flags.tolist()
+        #Clear flags associated with ignore values
+        for ignoreval in self.ignore['range']:
+            flags[dvals==ignoreval] = 0
+        
+        return flags
 
     def check_rate(self,data):
         '''
@@ -104,6 +109,11 @@ class dataqc:
         #Endpoints
         flags.insert(0,rateflags[0])
         flags.append(rateflags[-1])
+
+        #Clear flags associated with ignore values
+        flags = np.array(flags)
+        for ignoreval in self.ignore['rate']:
+            flags[dvals==ignoreval] = 0
         
         return flags
 
@@ -188,6 +198,11 @@ class dataqc:
         #Endpoints
         flags.insert(0,slopeflagsnew[0])
         flags.append(slopeflagsnew[-1])
+
+        #Clear flags associated with ignore values
+        flags = np.array(flags)
+        for ignoreval in self.ignore['flat']:
+            flags[dvals==ignoreval] = 0
  
         return flags
 

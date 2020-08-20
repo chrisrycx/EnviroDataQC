@@ -41,7 +41,7 @@ def check_vals(data,vartype):
     
     #Load QC Settings for this variable type
     qcranges = qcsettings[vartype]
-    qc = dataqc(vartype,qcranges['good'],qcranges['suspicious'])
+    qc = dataqc(vartype,qcranges['good'],qcranges['suspicious'],qcranges['ignore_vals'])
 
     #Check range
     data['flags_range'] = qc.check_range(data)
