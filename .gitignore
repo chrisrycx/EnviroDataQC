@@ -1,6 +1,7 @@
 # Project specific
 tests/.old/*
 .ods#
+.experiments
 
 # Compiled code
 *.pyc
