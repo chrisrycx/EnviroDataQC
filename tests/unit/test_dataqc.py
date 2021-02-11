@@ -7,6 +7,7 @@ import unittest
 import datetime
 import pandas as pd
 import numpy as np
+import pytz
 from envirodataqc.dataqc import dataqc
 
 class Testdataqc(unittest.TestCase):
@@ -165,6 +166,27 @@ class Testdataqc(unittest.TestCase):
         flags = [0,1,1,1,0,0,0,0,2,2,2,2]
         testflags = qc.check_flat(data)
         self.assertEqual(testflags,flags)
+
+    def test_rate_tz(self):
+        '''
+        Re-run rate test but make dataframe timezone aware
+        '''
+        #Test parameters
+        testgood = {'range':[(-1,2),(4,6)],'rate':[(-0.27,0.27)],'flat':[]}
+        testsusp = {'range':[(-5,-1)],'rate':[(0.27,0.34),(-0.34,-0.27)],'flat':[]}
+        flags = [0,0,1,1,1,1,1,0,1,2,1,0,0]
+
+        #Load class
+        qc = dataqc('test',testgood,testsusp)
+
+        #Localize dataframe
+        tz = pytz.timezone('America/Denver')
+        datatz = self.data.tz_localize(tz)
+
+        #Test output
+        testflags = qc.check_rate(datatz)
+        self.assertEqual(testflags,flags)
+
 
 
 
