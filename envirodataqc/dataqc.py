@@ -88,9 +88,9 @@ class dataqc:
         #Calculate rates of change between points (units/min)
         dvals = data.iloc[:,0].values
         valdiff = np.diff(dvals)
-        timediff = np.diff(data.index)
-        timediff = timediff.astype(float)/(60*(10**9)) #60 x 10^9 to convert from nanosec
-        dataslopes = valdiff/timediff
+        timediff = data.index.to_series().diff() #Convert to series then use diff
+        timediff_min = (timediff[1:].to_numpy().astype(float))/(60*(10**9)) #60 x 10^9 to convert from nanosec
+        dataslopes = valdiff/timediff_min
 
         #Determine if different rates are good, suspicious, or bad
         #Check suspicious first so that good range will override
@@ -128,15 +128,15 @@ class dataqc:
         '''
         #Calculate rates of change between points (units/min)
         dvals = data.iloc[:,0].values
-        timediff = np.diff(data.index)
-        timediff = timediff.astype(float)/(60*(10**9)) #60 x 10^9 to convert from nanosec
+        timediff = data.index.to_series().diff() #Convert to series then use diff
+        timediff_min = (timediff[1:].to_numpy().astype(float))/(60*(10**9)) #60 x 10^9 to convert from nanosec
         valdiff = np.diff(dvals)
         
         #Create a list of flags where slopes == 0
         slopeflags = (valdiff==0)*1
 
         #Combine flags with timediff to isolate times where flat
-        timediff = timediff*slopeflags
+        timediff = timediff_min*slopeflags
 
         #Extract the times associated with each flat section
         flatgroups = []
