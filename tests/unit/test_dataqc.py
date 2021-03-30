@@ -182,10 +182,11 @@ class Testdataqc(unittest.TestCase):
         #Test parameters
         testgood = {'range':[(-1,2),(4,6)],'rate':[(-0.27,0.27)],'flat':[]}
         testsusp = {'range':[(-5,-1)],'rate':[(0.27,0.34),(-0.34,-0.27)],'flat':[]}
+        testignore = {'range':[],'rate':[],'flat':[]}
         flags = [0,0,1,1,1,1,1,0,1,2,1,0,0]
 
         #Load class
-        qc = dataqc('test',testgood,testsusp)
+        qc = dataqc('test',testgood,testsusp,testignore)
 
         #Localize dataframe
         tz = pytz.timezone('America/Denver')
