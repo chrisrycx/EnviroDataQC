@@ -72,7 +72,65 @@ def check_gaps(dataindex):
 
     return tot
 
+def daily_quality(data):
+    '''
+    Calculate daily quality values based on data
+    quality flags and spacing of values. 
+    Daily quality values defined as:
+    1 - good: % good data > 90
+              sum where data spacing > 1hr is <= 1hr
+    2 - moderate: % good data > 80
+                  sum where data spacing > 1hr is <= 2hr
+    3 - bad: other criteria not met
 
+    Input
+    Pandas dataframe with datetime index
+    Columns: flags_range, flags_flat, flags_rate
+    Output
+    Pandas dataframe with date and column: 'quality'
+    - quality levels = good, moderate, bad (1,2,or 3)
+    '''
+    #Calculate percent good for each day
+    funcdata = data[['flags_range','flags_flat','flags_rate']].copy()
+    funcdata['maxflag'] = funcdata.max(1)
+    funcdata = funcdata[funcdata < 2] #Remove bad rows
+    percent_good = funcdata.maxflag.resample('1D').agg(lambda x: x[x==0].size/x.size) 
+
+    #Function for calculating gaps
+    def gapcalc(day_hours,max_gap=1):
+        '''
+        Calculate total gaps in datetimes greater than max_gaps
+        Use with Pandas resampler:
+        Expects a Pandas series consisting of a column
+        of hours into a day
+        '''
+        day_hours = day_hours.to_numpy()
+
+        #Calculate gaps
+        gaps = np.diff(np.concatenate([[0],day_hours,[24]]))
+
+        #Sum
+        return gaps[gaps > max_gap].sum()
+
+    funcdata['dayhours'] = funcdata.index.hour + funcdata.index.minute/60
+    day_gaps = funcdata.dayhours.resample('1D').agg(gapcalc)
+    
+    #Combine series into dataframe
+    data_quality = pd.DataFrame({
+        'percent_good':percent_good,
+        'day_gaps':day_gaps
+    })
+
+    #Calculate quality - Note that order matters here! Calc mod first, then good
+    data_quality['quality'] = 3 #Assume all bad
+    good_data = (data_quality.percent_good >= 0.9) & (data_quality.day_gaps <= 1)
+    mod_data = (data_quality.percent_good >= 0.8) & (data_quality.day_gaps <= 2)
+    data_quality.loc[mod_data,'quality'] = 2
+    data_quality.loc[good_data,'quality'] = 1
+
+    data_quality = data_quality[['quality']]
+    
+    return data_quality
 
      
 
