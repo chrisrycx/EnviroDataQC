@@ -4,6 +4,7 @@ Unit tests for wind.py
 
 import unittest
 import datetime
+import pytz
 import pandas as pd
 import numpy as np
 from envirodataqc import wind
@@ -64,6 +65,17 @@ class test_wind(unittest.TestCase):
 
 
         self.assertEqual(testflags,trueflags)
+
+    def test_windsp_ratio_tz(self):
+        '''
+        Test windsp ratio using TZ aware dataframe
+        '''
+        tmzn = pytz.timezone('America/Denver')
+        datatz = self.data.tz_localize(tmzn)
+        testratio = wind.check_windsp_ratio(datatz)
+        trueratio = 0.31
+
+        self.assertAlmostEqual(testratio,trueratio,3)
 
 
 

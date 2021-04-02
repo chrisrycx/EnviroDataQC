@@ -21,9 +21,9 @@ def check_windsp_ratio(data):
 
     #Calculate the average using numerical integration
     dvals = data.iloc[:,0].to_numpy()
-    timediff = np.diff(data.index)
-    timediff = timediff.astype(float)/(60*(10**9)) #60 x 10^9 to convert from nanosec
-    dmins = np.cumsum(timediff) #Minutes past starting time
+    timediff = data.index.to_series().diff() #Convert to series then use diff
+    timediff_min = (timediff[1:].to_numpy().astype(float))/(60*(10**9)) #60 x 10^9 to convert from nanosec
+    dmins = np.cumsum(timediff_min) #Minutes past starting time
     dmins = np.insert(dmins,0,0)
     dataintegral = np.trapz(dvals,dmins)
     dave = dataintegral/dmins[-1] #Last value should be total time period
@@ -99,15 +99,4 @@ def check_winddir_withsp(wind_speed,wind_direction):
 
 #Quick test
 if __name__=='__main__':
-    '''
-    ws = np.array([1,1,0,0])
-    wd = np.array([2,3,4,5])
-
-    flags = check_windsp_withdir(ws,wd)
-    '''
-    ws = np.array([1,0,0,2,3])
-    wd = np.array([2,3,3,5,5])
-
-    flags = check_winddir_withsp(ws,wd)
-
-    print(flags)
+    pass
