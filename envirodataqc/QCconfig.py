@@ -175,6 +175,27 @@ swrad = {
     }
 }
 
+#Precipitation rate
+#Units - in/hr, none, minutes
+#Ref - Fiebrich et al. 2010 for the most part
+precip = {
+    'good':{
+        'range':[(0,6)],
+        'rate':[(-0.6,0.6)],
+        'flat':[(0,60)]
+    },
+    'suspicious':{
+        'range':[(6,24)],
+        'rate':[],
+        'flat':[(60,90)]
+    },
+    'ignore_vals':{
+        'range':[],
+        'rate':[],
+        'flat':[0]
+    }
+}
+
 
 
 #---------------- Section 2 ----------------
@@ -185,5 +206,6 @@ qcsettings = {
     'air_pressure':bp,
     'wind_speed':ws,
     'wind_direction':wd,
-    'solar_radiation':swrad
+    'solar_radiation':swrad,
+    'precipitation':precip
     }

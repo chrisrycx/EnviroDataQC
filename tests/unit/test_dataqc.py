@@ -193,7 +193,7 @@ class Testdataqc(unittest.TestCase):
         datatz = self.data.tz_localize(tz)
 
         #Test output
-        testflags = qc.check_rate(datatz)
+        testflags = qc.check_rate(datatz).tolist()
         self.assertEqual(testflags,flags)
 
 
