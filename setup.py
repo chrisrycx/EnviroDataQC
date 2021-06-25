@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="envirodataqc",
-    version="0.3.0",
+    version="0.3.1",
     author="Chris Cox",
     author_email="chrisrycx@gmail.com",
     description="Environmental data quality control",
