@@ -84,17 +84,15 @@ def daily_quality(data):
     3 - bad: other criteria not met
 
     Input
-    Pandas dataframe with datetime index
-    Columns: flags_range, flags_flat, flags_rate
-    Output
-    Pandas dataframe with date and column: 'quality'
-    - quality levels = good, moderate, bad (1,2,or 3)
+    Pandas series of quality values (0,1,2) with datetime index
+    Consolidate multiple columns of flags to one column prior to input
+    
+    Output:
+    Pandas series with quality level 0, 1, 2 (good, moderate, bad) and date for an index
+    
     '''
     #Calculate percent good for each day
-    funcdata = data[['flags_range','flags_flat','flags_rate']].copy()
-    funcdata['maxflag'] = funcdata.max(1)
-    funcdata = funcdata[funcdata < 2] #Remove bad rows
-    percent_good = funcdata.maxflag.resample('1D').agg(lambda x: x[x==0].size/x.size) 
+    percent_good = data.resample('1D').agg(lambda x: x[x==0].size/x.size) 
 
     #Function for calculating gaps
     def gapcalc(day_hours,max_gap=1):
@@ -112,8 +110,8 @@ def daily_quality(data):
         #Sum
         return gaps[gaps > max_gap].sum()
 
-    funcdata['dayhours'] = funcdata.index.hour + funcdata.index.minute/60
-    day_gaps = funcdata.dayhours.resample('1D').agg(gapcalc)
+    day_hours = pd.Series(data.index.hour + data.index.minute/60,index=data.index)
+    day_gaps = day_hours.resample('1D').agg(gapcalc)
     
     #Combine series into dataframe
     data_quality = pd.DataFrame({
@@ -122,13 +120,13 @@ def daily_quality(data):
     })
 
     #Calculate quality - Note that order matters here! Calc mod first, then good
-    data_quality['quality'] = 3 #Assume all bad
+    data_quality['quality'] = 2 #Assume all bad
     good_data = (data_quality.percent_good >= 0.9) & (data_quality.day_gaps <= 1)
     mod_data = (data_quality.percent_good >= 0.8) & (data_quality.day_gaps <= 2)
-    data_quality.loc[mod_data,'quality'] = 2
-    data_quality.loc[good_data,'quality'] = 1
+    data_quality.loc[mod_data,'quality'] = 1
+    data_quality.loc[good_data,'quality'] = 0
 
-    data_quality = data_quality[['quality']]
+    data_quality = data_quality['quality']
     
     return data_quality
 

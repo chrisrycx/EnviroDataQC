@@ -36,15 +36,7 @@ def make_dataset(datadate,percent_good,gaps):
     badpts = 96 - goodpts
 
     #Create data frame
-    data = pd.DataFrame(
-        {
-            'values':[999]*96,
-            'flags_range':[0]*goodpts + [1]*badpts,
-            'flags_rate':[0]*96,
-            'flags_flat':[0]*96
-        },
-        index = dts
-    )
+    data = pd.Series([0]*goodpts + [1]*badpts, index = dts)
 
     #Delete a range of values to create a gap
     if (gaps >= 1) and (gaps <=12):
@@ -80,7 +72,7 @@ class Testdataqc(unittest.TestCase):
         day7 = make_dataset('2021-03-26', 50, 3)
         
         #Concatenate dataframes
-        self.testdf = pd.concat([day1,day2,day3,day4,day5,day6,day7])
+        self.testdata = pd.concat([day1,day2,day3,day4,day5,day6,day7])
 
     def test_alldata(self):
         '''
@@ -97,40 +89,30 @@ class Testdataqc(unittest.TestCase):
         '''
         #Create anticipated output
         dts = pd.date_range('2021-03-20','2021-03-26',freq='1D')
-        true_quality = pd.DataFrame(
-            {
-            'quality':[1,1,2,2,2,3,3]
-            },
-            index = dts
-        )
-
+        true_quality = pd.Series([0,0,1,1,1,2,2], index = dts)
+          
         #Calculate data quality
-        dailyq = envqc.daily_quality(self.testdf)
+        dailyq = envqc.daily_quality(self.testdata)
 
         #Assert equal
-        pd.testing.assert_frame_equal(true_quality,dailyq)
+        pd.testing.assert_series_equal(true_quality,dailyq,check_names=False)
     
     def test_alldata_tz(self):
         '''
         Same test as above but data is now timezone aware
         '''
         tmzn = pytz.timezone('America/Denver')
-        testdf = self.testdf.tz_localize(tmzn)
+        testseries = self.testdata.tz_localize(tmzn)
 
         #Create anticipated output
         dts = pd.date_range('2021-03-20','2021-03-26',freq='1D',tz=tmzn)
-        true_quality = pd.DataFrame(
-            {
-            'quality':[1,1,2,2,2,3,3]
-            },
-            index = dts
-        )
+        true_quality = pd.Series([0,0,1,1,1,2,2],index = dts)
 
         #Calculate data quality
-        dailyq = envqc.daily_quality(testdf)
+        dailyq = envqc.daily_quality(testseries)
 
         #Assert equal
-        pd.testing.assert_frame_equal(true_quality,dailyq)
+        pd.testing.assert_series_equal(true_quality,dailyq,check_names=False)
         
 
 
