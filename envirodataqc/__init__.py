@@ -28,15 +28,10 @@ def check_vals(data,vartype):
     Evaluate range, step change, and flatlining
     of input data.
     Inputs
-     - Pandas dataframe with datetimeindex and one column of values
+     - Pandas Series of data with datetimeindex
      - variable type matching one of the variables in configuration file
     Output - Pandas dataframe of original input plus flag columns 
 
-    check_vals Algorithm
-    - Load setting for input variable type
-    - Check for range
-    - Check for step change
-    - Check for flatlining
     '''
     
     #Load QC Settings for this variable type

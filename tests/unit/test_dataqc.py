@@ -14,7 +14,7 @@ class Testdataqc(unittest.TestCase):
 
     def setUp(self):
         '''
-        Create a pandas dataframe for tests
+        Create a pandas Series for tests
         This dataset is somewhat arbitrary but meant to 
         be useful in a variety of ways.
         '''
@@ -41,7 +41,7 @@ class Testdataqc(unittest.TestCase):
             dtstamp.append(val[0])
             dvals.append(val[1])
 
-        self.data = pd.DataFrame({'testvals':dvals},index=dtstamp)
+        self.data = pd.Series(dvals,index=dtstamp)
 
     def tearDown(self):
         pass
@@ -154,7 +154,7 @@ class Testdataqc(unittest.TestCase):
             dtstamp.append(val[0])
             dvals.append(val[1])
 
-        data = pd.DataFrame({'testvals':dvals},index=dtstamp)
+        data = pd.Series(dvals,index=dtstamp)
 
         #Test parameters
         testgood = {

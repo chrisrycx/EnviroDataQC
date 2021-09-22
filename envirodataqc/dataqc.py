@@ -55,12 +55,12 @@ class dataqc:
         '''
         Check data against all good and suspicious ranges
         Input
-        - data: pandas df with first column values
+        - data: pandas Series
         Returns
         List of flags associated with data values
         '''
 
-        dvals = data.iloc[:,0].values
+        dvals = data.to_numpy()
         flags = np.ones(len(dvals),dtype=np.int8)*2 #Set all flags to 2 (bad)
 
         #Check suspicious first so that good range will override
@@ -86,7 +86,7 @@ class dataqc:
         List of flags associated with data values
         '''
         #Calculate rates of change between points (units/min)
-        dvals = data.iloc[:,0].values
+        dvals = data.to_numpy()
         valdiff = np.diff(dvals)
         timediff = data.index.to_series().diff() #Convert to series then use diff
         timediff_min = (timediff[1:].to_numpy().astype(float))/(60*(10**9)) #60 x 10^9 to convert from nanosec
@@ -127,7 +127,7 @@ class dataqc:
         List of flags associated with data values
         '''
         #Calculate rates of change between points (units/min)
-        dvals = data.iloc[:,0].values
+        dvals = data.to_numpy()
         timediff = data.index.to_series().diff() #Convert to series then use diff
         timediff_min = (timediff[1:].to_numpy().astype(float))/(60*(10**9)) #60 x 10^9 to convert from nanosec
         valdiff = np.diff(dvals)
