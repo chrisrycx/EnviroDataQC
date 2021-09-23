@@ -38,16 +38,19 @@ def check_vals(data,vartype):
     qcranges = qcsettings[vartype]
     qc = dataqc(vartype,qcranges['good'],qcranges['suspicious'],qcranges['ignore_vals'])
 
+    #Create output dataframe
+    data_flagged = pd.DataFrame({'values':data})
+
     #Check range
-    data['flags_range'] = qc.check_range(data)
+    data_flagged['flags_range'] = qc.check_range(data)
 
     #Check step change
-    data['flags_rate'] = qc.check_rate(data)
+    data_flagged['flags_rate'] = qc.check_rate(data)
 
     #Check flatlining
-    data['flags_flat'] = qc.check_flat(data)
+    data_flagged['flags_flat'] = qc.check_flat(data)
 
-    return data
+    return data_flagged
 
 def check_gaps(dataindex):
     '''
